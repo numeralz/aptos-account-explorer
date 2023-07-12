@@ -24,8 +24,8 @@ const aptosClient = new AptosClient(CHAIN_URL, {
 
 /* Database */
 const pg = new Client({
-  host: 'localhost',
-  port: 5432,
+  host: process.env.PG_HOST || 'localhost',
+  port: Number(process.env.PG_PORT) || 5432,
   user: 'postgres',
   password: 'y37ctyn5487thfyn4857hv78543yn',
   database: 'wallet'
@@ -244,6 +244,7 @@ export async function historyRouter(){
     await ensureAccount(address);
 
     console.log(`Getting transactions for ${address}`);
+
 
     const totalItems = await pg.query(`
       SELECT COUNT(*) FROM txns WHERE sender = $1::text

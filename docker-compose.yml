@@ -22,9 +22,20 @@ services:
 
   server:
     build: ./server
+    environment:
+      - PG_HOST=db
+      - PG_PORT=5432
     restart: always
+    ports:
+      - 3000:3000
+    expose:
+      - 3000
 
     
   client:
     build: ./client
     restart: always
+    ports:
+      - 3001:3001
+    expose:
+      - 3001

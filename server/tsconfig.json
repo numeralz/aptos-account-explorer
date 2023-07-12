@@ -12,10 +12,10 @@
       "ESNext",
       "dom",
     ],
-    "types": [
-      "node",
-      "passport"
-    ],
+    // "types": [
+    //   "node",
+    //   "passport" 
+    // ],
     "typeRoots": [
       "./types"
     ],
