@@ -1,0 +1,226 @@
+---
+# yarn add -D eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-plugin-sort-class-members eslint-plugin-typescript-sort-keys
+env:
+  es6: true
+  node: true
+extends:
+  - eslint:recommended
+  - plugin:@typescript-eslint/recommended
+parser: '@typescript-eslint/parser'
+parserOptions:
+  ecmaVersion: 2022
+  parser: '@typescript-eslint/parser'
+  sourceType: module
+plugins:
+  - '@typescript-eslint'
+  - sort-class-members
+  - typescript-sort-keys
+root: true
+rules:
+  no-async-promise-executor:
+    - warn
+  '@typescript-eslint/ban-ts-comment':
+    - warn
+  '@typescript-eslint/no-this-alias':
+    - warn
+  '@typescript-eslint/no-unused-vars':
+    - warn
+  '@typescript-eslint/no-namespace':
+    - 'off'
+  '@typescript-eslint/prefer-optional-chain':
+    - error
+  typescript-sort-keys/interface: error
+  typescript-sort-keys/string-enum: error
+  array-bracket-newline:
+    - error
+    - consistent
+  array-bracket-spacing:
+    - error
+    - always
+  array-element-newline:
+    - error
+    - consistent
+  prefer-const:
+    - 'off'
+  brace-style:
+    - error
+    - 1tbs
+    - allowSingleLine: false
+  camelcase:
+    - warn
+  class-methods-use-this:
+    - warn
+  comma-dangle:
+    - error
+    - arrays: always
+      exports: always-multiline
+      functions: never
+      imports: always-multiline
+      objects: always
+  comma-spacing:
+    - error
+    - after: true
+      before: false
+  complexity:
+    - warn
+    - max: 10
+  consistent-return:
+    - 'off'
+  curly:
+    - error
+    - all
+  eqeqeq:
+    - warn
+    - always
+  func-call-spacing:
+    - warn
+    - always
+  function-call-argument-newline:
+    - error
+    - consistent
+  function-paren-newline:
+    - error
+    - multiline-arguments
+  implicit-arrow-linebreak:
+    - error
+    - beside
+  indent:
+    - error
+    - 2
+    - ArrayExpression: 1
+      MemberExpression: 1
+      ObjectExpression: 1
+      SwitchCase: 1
+      flatTernaryExpressions: false
+  key-spacing:
+    - error
+    - align: colon
+      beforeColon: true
+  keyword-spacing:
+    - error
+    - after: true
+      before: true
+  lines-around-comment:
+    - error
+    - beforeBlockComment: true
+  max-len:
+    - warn
+  newline-per-chained-call:
+    - error
+    - ignoreChainWithDepth: 2
+  no-constant-condition:
+    - warn
+  no-console:
+    - 'off'
+  no-fallthrough:
+    - 'off'
+  no-mixed-operators:
+    - error
+    - groups:
+        - - '&&'
+          - '||'
+  no-multi-spaces:
+    - error
+    - exceptions:
+        VariableDeclarator: true
+  no-multiple-empty-lines:
+    - error
+    - max: 1
+  no-param-reassign:
+    - warn
+  no-restricted-syntax:
+    - error
+    - ForInStatement
+    - LabeledStatement
+    - WithStatement
+  no-trailing-spaces:
+    - error
+    - ignoreComments: true
+      skipBlankLines: true
+  no-undef:
+    - warn
+  no-underscore-dangle:
+    - warn
+    - allowAfterThis: true
+  no-unsafe-optional-chaining:
+    - error
+    - disallowArithmeticOperators: true
+  no-unused-vars:
+    - warn
+  object-curly-newline:
+    - error
+    - ExportDeclaration: always
+      ImportDeclaration:
+        minProperties: 4
+        multiline: true
+      ObjectExpression:
+        minProperties: 1
+        multiline: true
+      ObjectPattern:
+        minProperties: 1
+        multiline: true
+  object-curly-spacing:
+    - error
+    - always
+  object-property-newline:
+    - error
+  object-shorthand:
+    - error
+    - always
+  padding-line-between-statements:
+    - error
+    - blankLine: never
+      next: '*'
+      prev: empty
+    - blankLine: always
+      next:
+        - multiline-expression
+        - multiline-block-like
+        - block-like
+        - function
+      prev: '*'
+    - blankLine: always
+      next: '*'
+      prev:
+        - multiline-expression
+        - multiline-block-like
+        - block-like
+        - function
+  prefer-destructuring:
+    - 'off'
+  prefer-object-spread:
+    - error
+  prefer-template:
+    - error
+  quote-props:
+    - error
+    - consistent-as-needed
+  quotes:
+    - error
+    - double
+    - allowTemplateLiterals: true
+  require-await:
+    - warn
+  semi:
+    - error
+    - always
+  sort-class-members/sort-class-members:
+    - error
+    - accessorPairPositioning: getThenSet
+      order:
+        - '[static-properties]'
+        - '[static-methods]'
+        - '[properties]'
+        - '[conventional-private-properties]'
+        - constructor
+        - '[methods]'
+        - '[conventional-private-methods]'
+  space-in-parens:
+    - error
+    - always
+    - exceptions:
+        - empty
+  space-infix-ops:
+    - error
+    - int32Hint: false
+  strict: 'off'

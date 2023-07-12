@@ -1,0 +1,25 @@
+
+version: '3.1'
+
+volumes:
+  pg-data:
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: wallet
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: y37ctyn5487thfyn4857hv78543yn
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+
+  api:
+    build: ./api
+    restart: always

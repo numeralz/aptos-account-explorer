@@ -1,0 +1,24 @@
+@hostname = http://localhost:3000
+
+
+### Accounts
+GET {{hostname}}/accounts
+
+
+### Account
+GET {{hostname}}/accounts/0x2d91309b5b07a8be428ccd75d0443e81542ffcd059d0ab380cefc552229b1a
+
+### Add Account
+POST {{hostname}}/accounts
+Content-Type: application/json
+
+{
+  "address": "0x2d91309b5b07a8be428ccd75d0443e81542ffcd059d0ab380cefc552229b1a"
+}
+
+### Txns
+GET {{hostname}}/accounts/0x2d91309b5b07a8be428ccd75d0443e81542ffcd059d0ab380cefc552229b1a/txns?limit=10&page=1
+
+
+### Page2
+GET {{hostname}}/accounts/0x2d91309b5b07a8be428ccd75d0443e81542ffcd059d0ab380cefc552229b1a/txns?limit=10&page=2

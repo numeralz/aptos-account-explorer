@@ -1,0 +1,7 @@
+**/*.log
+node_modules
+aptos-core
+.aptos
+info.txt
+server/dist
+client/dist

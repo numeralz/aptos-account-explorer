@@ -1,0 +1,241 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+// @import "../node_modules/bootstrap/scss/_bootstrap";
+
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/variables-dark";
+@import "../node_modules/bootstrap/scss/maps";
+@import "../node_modules/bootstrap/scss/mixins";
+@import "../node_modules/bootstrap/scss/utilities";
+
+
+$utilities: map-merge(
+  $utilities,
+  (
+    "cursor": (
+      property: cursor,
+      class: cursor,
+      responsive: true,
+      values: auto pointer grab,
+    )
+  )
+);
+
+$enable-negative-margins: true;
+// $enable-shadows: true;
+
+// Layout & components
+@import "../node_modules/bootstrap/scss/root";
+@import "../node_modules/bootstrap/scss/reboot";
+@import "../node_modules/bootstrap/scss/type";
+@import "../node_modules/bootstrap/scss/images";
+@import "../node_modules/bootstrap/scss/containers";
+@import "../node_modules/bootstrap/scss/grid";
+@import "../node_modules/bootstrap/scss/tables";
+@import "../node_modules/bootstrap/scss/forms";
+@import "../node_modules/bootstrap/scss/buttons";
+@import "../node_modules/bootstrap/scss/transitions";
+@import "../node_modules/bootstrap/scss/dropdown";
+@import "../node_modules/bootstrap/scss/button-group";
+@import "../node_modules/bootstrap/scss/nav";
+@import "../node_modules/bootstrap/scss/navbar";
+@import "../node_modules/bootstrap/scss/card";
+@import "../node_modules/bootstrap/scss/accordion";
+@import "../node_modules/bootstrap/scss/breadcrumb";
+@import "../node_modules/bootstrap/scss/pagination";
+@import "../node_modules/bootstrap/scss/badge";
+@import "../node_modules/bootstrap/scss/alert";
+@import "../node_modules/bootstrap/scss/progress";
+@import "../node_modules/bootstrap/scss/list-group";
+@import "../node_modules/bootstrap/scss/close";
+@import "../node_modules/bootstrap/scss/toasts";
+@import "../node_modules/bootstrap/scss/modal";
+@import "../node_modules/bootstrap/scss/tooltip";
+@import "../node_modules/bootstrap/scss/popover";
+@import "../node_modules/bootstrap/scss/carousel";
+@import "../node_modules/bootstrap/scss/spinners";
+@import "../node_modules/bootstrap/scss/offcanvas";
+@import "../node_modules/bootstrap/scss/placeholders";
+
+// Helpers
+@import "../node_modules/bootstrap/scss/helpers";
+
+// Utilities
+@import "../node_modules/bootstrap/scss/utilities/api";
+// scss-docs-end import-stack
+
+
+
+body{
+  /* poppins */
+  font-family: 'Poppins', sans-serif;
+}
+
+.section{
+  padding: 3rem 0;
+}
+
+.pre{
+  font-family: 'Courier New', Courier, monospace;
+  white-space: normal;
+  display: inline-flex;
+  word-wrap: break-word;
+  flex-wrap: wrap;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.faded{
+  opacity: 0.5;
+}
+
+.w-0{
+  width: 0px !important;
+}
+
+table{
+  margin: 0 !important;
+  width: 100% !important;
+
+  tbody, thead{
+    th{
+      white-space: nowrap;
+      font-size: 0.85rem;
+    }
+    th,td{
+      vertical-align: middle;
+
+      div, button.btn, .alert {
+        white-space: nowrap !important;
+        word-wrap: break-word !important;
+        text-overflow: ellipsis !important;
+        width: auto !important;
+        display: inline-block !important;
+        overflow: hidden !important;
+      }
+    }
+  }
+}
+
+@include media-breakpoint-down(lg){
+
+  .grid-h{
+    &>.menu{
+      min-width: 20rem;
+    }
+  }
+
+  // stack table
+  table{
+    display: block;
+    -webkit-overflow-scrolling: touch;
+    border-collapse: collapse;
+    overflow-x: hidden;
+
+    thead{
+      display: none !important;
+    }
+    thead, tbody{
+      width: 100%;
+      display: block;
+
+      tr{
+        background-color: #fff;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin: 0.25rem 0;
+        border: 1px solid rgba(0,0,0,.1);
+        width: 100%;
+        overflow: hidden;
+        
+        th{
+          text-decoration: underline;
+        }
+
+        td,th{
+          // word-wrap: break-word;
+          overflow: hidden;
+          flex: 1 1 100%;
+
+          div, button.btn, .alert {
+            white-space: nowrap !important;
+            word-wrap: break-word !important;
+            text-overflow: ellipsis !important;
+            width: 100% !important;
+            display: inline-block;
+            overflow: hidden;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+code{
+  font-family: 'Courier New', Courier, monospace !important;
+  font-size: 0.9rem !important;
+  color: #000;
+}
+
+.scroll-y{
+  overflow: auto;
+  display: flex;
+}
+
+html,body, #root{
+  height: 100vh !important;
+  overflow: hidden;
+}
+
+.grid-h{
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  grid-template-rows: 1fr;
+  height: 100% !important;
+
+  &>.menu{
+    max-width: 30rem;
+    border-right: 1px solid rgba(0,0,0,.1);
+    height: 100%;
+  }
+
+  &>.main{
+    overflow: auto;
+    height: 100% !important;
+  }
+}
+
+.grid-v{
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr;
+  height: 100vh;
+
+  &>.menu{
+    border-bottom: 1px solid rgba(0,0,0,.1);
+  }
+  &>.main{
+    overflow-y: auto;
+  }
+}
+
+// thin scroll bars
+::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFF;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #444;
+}
+
+.z-top{
+  z-index: 9999;
+}
