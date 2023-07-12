@@ -12,6 +12,7 @@ import Paginate from './components/Paginate';
 import RenderTime from './components/RenderTime';
 import { getFunctionName, prettyName } from './utils';
 import WalletAddress from './components/WalletAddress';
+import { useRoutes } from '@solidjs/router';
 
 const PAGINATE_SIZE = 100;
 
@@ -19,26 +20,26 @@ function totalFee(txn:any){
   return txn.raw.gas_used * txn.raw.gas_unit_price;
 }
 
+const [loading, setLoading] = createSignal<boolean>(false);
+
 const App: Component = () => {
   
   const navigate = useNavigate();
   const params = useParams();
 
   const [
-    query, $query
+    query, setQuery
   ] = useSearchParams<{
     page?: string;
   }>();
 
-  // const pageNum = () => Number(query.page) || 1;
 
-  const [loading, $loading] = createSignal<boolean>(false);
   
-  const [activeItem, $activeItem] = createSignal<any>();
-  const [activeAccount, $activeAccount] = createSignal<any>();
-  const [numPages, $numPages] = createSignal<number>(1);
+  const [activeTxn, setActiveTxn] = createSignal<any>();
+  const [numPages, setNumPages] = createSignal<number>(0);
+  const [totalItems, setTotalItems] = createSignal<number>(0);
 
-  const [page, $page] = createSignal<number>(
+  const [page, setPage] = createSignal<number>(
     Number(query.page) || 1
   );
 
@@ -61,6 +62,7 @@ const App: Component = () => {
   }
 
   async function fetchTransaction(txn:any) {
+    setLoading(true);
     try{
       const {
         data,
@@ -71,19 +73,31 @@ const App: Component = () => {
       console.log({
         txn: data
       });
+      setLoading(false);
       return data as any;
     }
     catch( error:any ){
       console.error( error );
     }
+    setLoading(false);
+  }
+
+  const changePage = (p:number=1)=>{
+    if(p === (page()||1)){
+      return;
+    }
+    setQuery({
+      page: (p.toString())
+    });
   }
   
   async function fetchTransactions(account:string, page:number=1) {
-    $loading(true);
+    setLoading(true);
 
     try{
       const {
         data,
+        status
       } = await axios.request( {
         method : "GET",
         url    : `/api/accounts/${account}/txns`,
@@ -92,28 +106,40 @@ const App: Component = () => {
           limit: PAGINATE_SIZE,
         }
       } );
-  
+      
+      setLoading(false);
+
+      if( status < 300 && status !== 200 ){
+        setTimeout(()=>{
+          fetchTransactions(account, page);
+        });
+        return;
+      }
+
+
       const {
         items,
         totalItems,
         limit
       } = data;
       
-      $page(
+      changePage(
         Math.max(1, Math.min(page, Math.ceil(totalItems/limit)))
       );
-      $numPages( Math.ceil(totalItems/limit) );
-  
+      setNumPages( Math.ceil(totalItems/limit) );
+      setTotalItems( totalItems );
+      
+      
       return (items as any[]).map(x=>{
   
         const funcParts = (x.raw?.payload?.function||"").split("::");
         // const typeParts = (x.raw?.payload?.type_arguments||"").split("::");
-  
+        
         let netAmount = 0;
-  
+        
         x.raw?.events?.forEach((event:any) => {
           const amt = Number(event.data.amount);
-  
+          
           if( event.type === "0x1::coin::WithdrawEvent" ){
             netAmount -= amt;
           }
@@ -121,7 +147,7 @@ const App: Component = () => {
             netAmount += amt;
           }
         })
-  
+        
         return {
           ...x,
           _type: funcParts[1]+"::"+funcParts[2],
@@ -134,7 +160,7 @@ const App: Component = () => {
       console.error( error );
     }
     
-    $loading(false);
+    setLoading(false);
   }
 
   let addressEl: typeof FormControl.prototype;
@@ -144,7 +170,7 @@ const App: Component = () => {
     refetch: $refetchTransactions
   }] = createResource(async ()=>{
     console.log("=fetch transactions")
-    return await fetchTransactions(params.address, page());
+    return await fetchTransactions(params.address, (Number(query.page)) || 1);
   });
 
   const [account, {
@@ -155,38 +181,47 @@ const App: Component = () => {
     return await fetchAccount(params.address);
   });
 
+  // React to changes in the query;
+
+  // createEffect(async ()=>{
+  //   $query({
+  //     page: page().toString()
+  //   });
+  // });
+
   createEffect(async ()=>{
-    $query({
-      page: page().toString()
-    });
+    console.log(`address effect: ${query.page}`);
+    if( query.page === page().toString() ){
+      return;
+    }
+    setPage(
+      Number(query.page||1)
+    );
 
     $refetchTransactions();
-  }, [
-    page(),
-  ], {
-    render: true,
-  })
-
-  createEffect(async ()=>{
-    $activeItem(undefined);
-    $transactions([]);
-    $refetchAccount();
-  }, [
-    params.address
-  ],{
-    render: true,
   });
   
   createEffect(async ()=>{
-    $page(
-      Number(query.page)
-    );
-    // $refetchTransactions();
-  }, [
-    query.page
-  ],{
-    // render: true,
+    console.log(`address effect: ${params.address}`);
+    $transactions([]);
+    setActiveTxn(null);
+    $refetchAccount();
+    $refetchTransactions();
   });
+
+  const gotoAddress = (_address:string)=>{
+    navigate(`/${_address}`,{
+      replace: true
+    });
+  }
+  
+  
+  // createEffect(async ()=>{
+  //   $page(
+  //     Number(query.page||1)
+  //   );
+  //   $refetchTransactions();
+  // });
 
   
   // createEffect(async ()=>{
@@ -210,13 +245,13 @@ const App: Component = () => {
           </div>
         }>
           <div class="grid-v">
-            <div class="menu p-2">
-              <Paginate numPages={numPages} page={page} setPage={$page} />
+            <div class="menu px-2 bg-light">
+              <Paginate numPages={numPages} page={page} setPage={changePage} />
             </div>
             <div class="main">
-              <Table variant='hover' size="sm" class="w-100 bg-light cursor-pointer">
+              <Table variant='hover' class="w-100 bg-light cursor-pointer">
                 <thead class="sticky-top">
-                  <tr class="border-bottom border-top table-light text-center">
+                  <tr class="border-bottom table-light text-center">
                     <th class="w-0">#</th>
                     <th>Version</th>
                     <th>Timestamp</th>
@@ -227,24 +262,29 @@ const App: Component = () => {
                   <For each={transactions()}>{ item => 
                     <tr 
                       onClick={ async ()=>{
-                        $activeItem( await fetchTransaction(item) );
+                        setActiveTxn( await fetchTransaction(item) );
                       }}
-                      class={ ( activeItem()?.sequence === item?.sequence) ? 'table-primary' : '' }
+                      class={ ( activeTxn()?.sequence === item?.sequence) ? 'table-primary' : '' }
                     >
+                      <td><code>{ item.sequence }</code></td>
                       <td>
-                        <Badge class="rounded-pill bg-light text-dark border">
-                          { item.sequence }
-                        </Badge>
-                      </td>
-                      <td>
-                        <code>{ item.version }</code>
+                        <span>{ item.version }</span>
                       </td>
                       <td><RenderTime value={ new Date( Number(item.timestamp)/1000 ) }/></td>
                       {/* <td><WalletAddress value={ item.sender }/></td> */}
                     </tr>
                   }</For>
                 </tbody>
+                <caption class="px-2">
+                  <div class="d-flex align-items-center justify-content-between w-100">
+                  <div class="small">Page {page()} of {numPages()} pages</div>
+                  <div class="small">{totalItems()} total items</div>
+                  </div>
+                </caption>
               </Table>
+            </div>
+            <div class="menu px-2 bg-light">
+              <Paginate numPages={numPages} page={page} setPage={changePage} />
             </div>
           </div>
         </Show>
@@ -260,7 +300,12 @@ const App: Component = () => {
                   async (e) => {
                     e.preventDefault();
                     const _address = addressEl.value;
-                    navigate(`/${_address}`);
+                    if(!_address){
+                      return;
+                    }
+                    navigate(`/${_address}`,{
+                      replace: true
+                    });
                   }
                 }
               >
@@ -276,17 +321,24 @@ const App: Component = () => {
                     <i class="fa fa-search"></i>
                   </Button> */}
                   {
-                    activeItem() && (
-                      <Button target="_blank" href={`https://aptoscan.com/version/${activeItem().version}`}>Reference <i class="fa fa-external-link"></i></Button>
+                    activeTxn() && (
+                      <Button target="_blank" href={`https://aptoscan.com/version/${activeTxn().version}`}>Reference <i class="fa fa-external-link"></i></Button>
                     )
                   }
                 </InputGroup>
               </Form>
+              
+              <Show when={loading()}>
+                <div class="text-center moving-stripes p-1 position-absolute w-100">
+                  {/* <span class="spinner-border spinner-border-sm me-2"></span> */}
+                  {/* <strong>Loading...</strong> */}
+                </div>
+              </Show>
             </Col>
 
-            <Show when={!!activeItem()}>
+            <Show when={!!activeTxn()}>
               <Col xs="12">
-                <h3 class="sticky-top bg-light py-2 border-bottom" style="top: 4rem;">Transaction <sup>#</sup>{ activeItem().sequence} &middot; { activeItem().version }</h3>
+                <h3 class="sticky-top bg-light py-2 border-bottom" style="top: 4rem;">Transaction <sup>#</sup>{ activeTxn().sequence} &middot; { activeTxn().version }</h3>
                 <ListGroup >
                   {/* <ListGroup.Item class="p-3 bg-light">
                     <code>
@@ -307,7 +359,7 @@ const App: Component = () => {
                           ()=><i class="fa fa-circle-exclamation text-secondary"></i>
                         )
                       ),
-                    } }/>)( activeItem() ) }
+                    } }/>)( activeTxn() ) }
                   </ListGroup.Item>
                   <ListGroup.Item class="p-3">
                     { ((a)=><RenderObject value={ {
@@ -318,7 +370,7 @@ const App: Component = () => {
                       ),
                       fee: totalFee(a),
                       sequence: a.sequence,
-                    } }/>)( activeItem() ) }
+                    } }/>)( activeTxn() ) }
 
                   </ListGroup.Item>
                   <ListGroup.Item class="p-3">
@@ -329,7 +381,7 @@ const App: Component = () => {
                       state_checkpoint_hash: a.raw.state_checkpoint_hash,
                       accumulator_root_hash: a.raw.accumulator_root_hash,
                       vm_status: a.raw.vm_status,
-                    } }/>)( activeItem() ) }
+                    } }/>)( activeTxn() ) }
                   </ListGroup.Item>
                   <ListGroup.Item class="p-3">
                     <h6>Gas</h6>
@@ -338,17 +390,17 @@ const App: Component = () => {
                       max: a.raw.max_gas_amount,
                       unit_price: a.raw.gas_unit_price,
                       fee: a.raw.gas_used * a.raw.gas_unit_price,
-                    } }/>)( activeItem() ) }
+                    } }/>)( activeTxn() ) }
                   </ListGroup.Item>
                   <ListGroup.Item class="p-3">
                     <h6>Signature</h6>
-                    { ((sig)=><RenderObject value={ sig }/>)( activeItem().raw?.signature ) }
+                    { ((sig)=><RenderObject value={ sig }/>)( activeTxn().raw?.signature ) }
                   </ListGroup.Item>
                 </ListGroup>
               </Col>
               <Col xs="12">
                 <h5 class="sticky-top bg-light py-2 border-bottom" style="top: 4rem;">Events</h5>
-                <For each={activeItem().raw?.events}>{ event =>
+                <For each={activeTxn().raw?.events}>{ event =>
                   <ListGroup class="mb-3">
                     <ListGroup.Item class="bg-light">
                       <h5 class="m-0">{(event.type).match(/^.+?::(.+?::.+?)\b/i)?.[1]}</h5>
@@ -363,7 +415,7 @@ const App: Component = () => {
               <Col xs="12">
                 <h5 class="sticky-top bg-light py-2 border-bottom" style="top: 4rem;">Changes</h5>
                 <ListGroup class="mb-3">
-                  <For each={activeItem().raw?.changes }>{ change =>
+                  <For each={activeTxn().raw?.changes }>{ change =>
                     <ListGroup.Item>
                       <RenderObject value={change} />
                     </ListGroup.Item>

@@ -47,7 +47,7 @@ const RenderString: Component<{
 
   if(value.match(/^0x/)){
     return (
-      <Alert title={value} class="py-0 font-monospace">
+      <Alert title={value} variant="info" class="py-0 font-monospace">
         {value}
       </Alert>
     )
@@ -71,9 +71,9 @@ const RenderObject: Component<{
     return <RenderString value={value} />
   }else if (typeof value === 'boolean') {
     return value ? (
-      <div class="text-success"><i class="fa fa-fw fa-check"/> <strong>Yes</strong></div>
+      <div class="text-success"><i class="fa fa-fw fa-check"/> <strong>True</strong></div>
     ) : (
-      <div class="text-secondary"><i class="fa fa-fw fa-times"/> <span>No</span></div>
+      <div class="text-secondary"><i class="fa fa-fw fa-times"/> <span>False</span></div>
     );
   }else if (typeof value === 'number') {
     return <RenderNumber value={value} />

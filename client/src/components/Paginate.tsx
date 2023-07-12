@@ -1,4 +1,4 @@
-import { Col, Pagination, Row } from "solid-bootstrap";
+import { Button, Col, Pagination, Row } from "solid-bootstrap";
 import { Component, createEffect, createSignal } from "solid-js";
 
 const showPages = 5;
@@ -40,23 +40,24 @@ const Paginate: Component<{
   )
   
   return (
-    <Pagination size="sm" class="w-100 my-2 flex-nowrap row g-1 overflow-hidden">
-      <Pagination.First
+    <Pagination size="sm" class="my-2 flex-nowrap row g-1">
+      {/* <Pagination.First
         onClick={ (e)=>(setPage_( 1 )) }
         disabled={ ( page() === 1) }
         class={ [( page() === 1) ? 'faded' : '', 'rounded-pill', 'col-auto'].join(" ") }
       >
         <i class="fa fa-angles-left"></i>
-      </Pagination.First>
+      </Pagination.First> */}
+      
       <Pagination.Prev
         onClick={ (e)=>(setPage_( page()-1 )) }
-        disabled={ ( page() <= 1) } 
-        class={ [( page() <= 1) ? 'faded' : '', 'col-auto'].join(" ") }
+        disabled={ ( page() <= 1) }
+        class={ [( page() <= 1) ? 'faded' : '', 'col-1 text-center'].join(" ") }
       >
         <i class="fa fa-chevron-left"></i>
       </Pagination.Prev>
 
-      <Col class="d-flex" style="overflow: hidden">
+      <Col class="d-flex" >
         { pages()?.map( (p) => {
             return(
               <Pagination.Item 
@@ -73,18 +74,18 @@ const Paginate: Component<{
       <Pagination.Next 
         onClick={ (e)=>(setPage_(page()+1)) }
         disabled={ (page() >= numPages()) }
-        class={[ (page() >= numPages()) ? 'faded' : '', 'col-auto'].join(" ") }
+        class={[ (page() >= numPages()) ? 'faded' : '', 'col-1 text-center'].join(" ") }
       >
         <i class="fa fa-chevron-right"></i>
       </Pagination.Next>
 
-      <Pagination.Last 
+      {/* <Pagination.Last 
         onClick={ (e)=>(setPage_( numPages() )) }
         disabled={ (page() >= numPages()) }
         class={ [(page() >= numPages()) ? 'faded' : '', 'col-auto'].join(" ") }
       >
         <i class="fa fa-angles-right"></i>
-      </Pagination.Last>
+      </Pagination.Last> */}
     </Pagination>
   )
 }

@@ -20,6 +20,11 @@ services:
     expose:
       - 5432
 
-  api:
-    build: ./api
+  server:
+    build: ./server
+    restart: always
+
+    
+  client:
+    build: ./client
     restart: always
