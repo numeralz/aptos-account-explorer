@@ -47,9 +47,10 @@ docker compose up db
 
   ![Alt text](image-3.png)
 
-<style>
+
+<!-- <style>
 img {
   width: 100%;
   height: auto;
 }
-</style>
+</style> -->
