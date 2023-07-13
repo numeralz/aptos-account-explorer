@@ -1,11 +1,16 @@
-# A simple Aptos wallet explorer
+# A simple Aptos Transaction explorer
 
 
 ## Tech Stack
-- Docker Compose
-- Postgres
-- Node.js
-- SolidJs
+
+- [Docker](https://docs.docker.com/)
+- [Node.js](https://nodejs.org/en/)
+  - [Postgres](https://www.npmjs.com/package/pg)
+  - [Express](https://expressjs.com/)
+- [SolidJS](https://www.solidjs.com/)
+  - [Bootstrap](https://getbootstrap.com/)
+- [Aptos](https://aptos.dev/sdks/ts-sdk/index/)
+
 
 ### Local Development
 ```sh
