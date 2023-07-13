@@ -12,7 +12,7 @@
 - [Aptos](https://aptos.dev/sdks/ts-sdk/index/)
 
 
-### Local Development
+## Local Development
 ```sh
 # Server
 cd ./server && yarn && yarn dev
@@ -25,7 +25,7 @@ docker compose up db
 # or run a local postgres 
 ```
 
-### Testing
+## Testing
 
 #### Run with Docker
 
