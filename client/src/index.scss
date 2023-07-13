@@ -118,7 +118,7 @@ table{
   }
 }
 
-@include media-breakpoint-down(lg){
+@include media-breakpoint-down(md){
 
   .grid-h{
     &>.menu{

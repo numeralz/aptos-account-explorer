@@ -11,13 +11,21 @@ import RenderObject from './components/RenderObject';
 import Paginate from './components/Paginate';
 import RenderTime from './components/RenderTime';
 import { getFunctionName, prettyName } from './utils';
-import WalletAddress from './components/WalletAddress';
-import { useRoutes } from '@solidjs/router';
+// import WalletAddress from './components/WalletAddress';
+// import { useRoutes } from '@solidjs/router';
 
 const PAGINATE_SIZE = 100;
 
 function totalFee(txn:any){
-  return txn.raw.gas_used * txn.raw.gas_unit_price;
+  return (txn.raw.gas_used) * (txn.raw.gas_unit_price) ;
+}
+
+function renderApt(amt:number|string){
+  return (
+    <span class="text-uppercase">
+      <i class="fa fa-fw fa-aptos"></i> { Number(amt) / 100000000} APT
+    </span>
+  )
 }
 
 const [loading, setLoading] = createSignal<boolean>(false);
@@ -240,7 +248,7 @@ const App: Component = () => {
         <Show when={!!transactions()?.length} fallback={
           <div class="d-flex align-items-center justify-content-center h-100 bg-light">
             <Alert>
-              Enter a valid address to view transactions
+              Enter a wallet address to view transactions.
             </Alert>
           </div>
         }>
@@ -294,8 +302,9 @@ const App: Component = () => {
         <Container class="py-4">
           <Row class="g-3 h-100">
             <Col xs="12" class="sticky-top z-top">
+              <label class="form-label">Wallet Address</label>
               <Form
-                class="py-2 w-100 bg-light"
+                class="w-100 bg-light"
                 onSubmit={
                   async (e) => {
                     e.preventDefault();
@@ -313,13 +322,13 @@ const App: Component = () => {
                   class="rounded-4 shadow-sm input-group-lg"
                 >
                   <Form.Control
-                    placeholder="Address"
+                    placeholder="0x00.."
                     value={params.address||''}
                     ref={addressEl}
                   />
-                  {/* <Button variant="secondary" type="submit">
+                  <Button variant="secondary" type="submit">
                     <i class="fa fa-search"></i>
-                  </Button> */}
+                  </Button>
                   {
                     activeTxn() && (
                       <Button target="_blank" href={`https://aptoscan.com/version/${activeTxn().version}`}>Reference <i class="fa fa-external-link"></i></Button>
@@ -368,7 +377,7 @@ const App: Component = () => {
                           getFunctionName(a.raw?.payload?.function)
                         }</strong>
                       ),
-                      fee: totalFee(a),
+                      fee: renderApt(totalFee(a)),
                       sequence: a.sequence,
                     } }/>)( activeTxn() ) }
 
@@ -389,7 +398,6 @@ const App: Component = () => {
                       used: a.raw.gas_used,
                       max: a.raw.max_gas_amount,
                       unit_price: a.raw.gas_unit_price,
-                      fee: a.raw.gas_used * a.raw.gas_unit_price,
                     } }/>)( activeTxn() ) }
                   </ListGroup.Item>
                   <ListGroup.Item class="p-3">

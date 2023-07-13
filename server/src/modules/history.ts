@@ -13,9 +13,10 @@ export interface WatchedAddress {
   isBusy?: boolean;
 }
 
-// const POLL_INTERVAL = 1000 * 60 * 60 * 4; // 4 hours
-const POLL_INTERVAL = 1000 * 60 // 1 minute
-const POLL_LIMIT = 1000;
+const POLL_INTERVAL = 1000 * 60 * 60 * 4; // 4 hours
+// const POLL_INTERVAL = 1000 * 60 // 1 minute
+const POLL_LIMIT = 10000; // a sane limit to prevent
+const DEV_RESET = false; // reset database on startup
 
 /* Blockchain */
 const CHAIN_URL = 'https://fullnode.mainnet.aptoslabs.com/v1';
@@ -31,7 +32,7 @@ const pg = new Client({
   database: 'wallet'
 });
 
-
+// fetch transactions 
 async function updateAccount(wa:WatchedAddress){
   if(wa.isBusy){
     return;
@@ -95,7 +96,7 @@ async function updateAccount(wa:WatchedAddress){
       `, [wa.last_sequence, wa.address]);
     }
   }catch(err){
-    console.log(err)
+    // console.log(err)
   }
   wa.isBusy = false;
 }
@@ -110,10 +111,12 @@ export async function historyRouter(){
   }
   
   // delete all tables
-  await pg.query(`
-    DROP TABLE IF EXISTS accounts;
-    DROP TABLE IF EXISTS txns;
-  `);
+  if(DEV_RESET){
+    await pg.query(`
+      DROP TABLE IF EXISTS accounts;
+      DROP TABLE IF EXISTS txns;
+    `);
+  }
 
   // create tables
   await pg.query(`
